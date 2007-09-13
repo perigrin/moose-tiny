@@ -1,49 +1,18 @@
 package Moose::Tiny;
 use strict;
 our $VERSION = '0.0.1';
-use Moose;
-use Moose::Object;
-use Moose::Util::TypeConstraints;
-
-my $CALLER;
-
-# This is stole from Moose.pm ... find the inline comments there
-sub _init_meta {
-    my $class = $CALLER;
-    subtype $class => as 'Object' => where { $_->isa($class) } =>
-      optimize_as { blessed( $_[0] ) && $_[0]->isa($class) }
-    unless find_type_constraint($class);
-
-    my $meta;
-    if ( $class->can('meta') ) {
-        $meta = $class->meta();
-        ( blessed($meta) && $meta->isa('Moose::Meta::Class') )
-          || confess
-"You already have a &meta function, but it does not return a Moose::Meta::Class";
-    }
-    else {
-        $meta = Moose::Meta::Class->initialize($class);
-        $meta->add_method(
-            'meta' => sub {
-
-                # re-initialize so it inherits properly
-                Moose::Meta::Class->initialize( blessed( $_[0] ) || $_[0] );
-            }
-        );
-    }
-    $meta->superclasses('Moose::Object')
-      unless $meta->superclasses();
-}
+use Moose 0.26;
 
 sub import {
-    return unless shift eq __PACKAGE__;
-    $CALLER = caller();
+    my $CALLER = caller();
+    
     strict->import;
     warnings->import;
 
+    Moose->import({into => $CALLER});
     # we should never export to main
     return if $CALLER eq 'main';
-    _init_meta();
+    Moose::_init_meta( $CALLER, shift );
 
     my $meta = $CALLER->meta;
 
