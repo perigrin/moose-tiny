@@ -75,7 +75,7 @@ This document describes Moose::Tiny version 0.0.1
     # Define a class
     package Foo;
 
-    use Object::Tiny qw{ bar baz };
+    use Moose::Tiny qw{ bar baz };
 
     1;
 
