@@ -7,7 +7,7 @@ BEGIN {
 	$^W = 1;
 }
 
-use Test::More tests => 11;
+use Test::More tests => 13;
 
 # Define a class
 SCOPE: {
@@ -44,5 +44,17 @@ SCOPE: {
 # Trigger the constructor exception
 SCOPE: {
 	eval "package Bar; use Moose::Tiny 'bad thing';";
+	ok( $@ =~ /Invalid accessor name/, 'Got expected error' );
+}
+
+# Trigger the constructor exception
+SCOPE: {
+	eval "package Bar; use Moose::Tiny { bad => 'thing' };";
+	ok( $@ =~ /Invalid accessor name/, 'Got expected error' );
+}
+
+# Trigger the constructor exception
+SCOPE: {
+	eval "package Bar; use Moose::Tiny undef;";
 	ok( $@ =~ /Invalid accessor name/, 'Got expected error' );
 }

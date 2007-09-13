@@ -15,13 +15,14 @@ sub import {
     Moose::_init_meta( $CALLER, shift );
 
     my $meta = $CALLER->meta;
-
+    {
+    no warnings;
     $meta->add_attribute( $_ => { reader => $_, init_arg => $_ } )
       for grep {
         defined and !ref and /^[^\W\d]\w*$/s
           or die "Invalid accessor name '$_'";
       } @_;
-
+    }
     return 1;
 }
 
@@ -31,7 +32,7 @@ __END__
 
 =head1 NAME
 
-Moose::Tiny - Why Should Object::Tiny get all teh Fun
+Moose::Tiny - Why Should Object::Tiny get all the Fun
 
 
 =head1 VERSION
@@ -61,8 +62,7 @@ I was looking at Object::Tiny and thought, wow I bet I could do that really easi
 
 =head1 INTERFACE 
 
-None. Moose::Tiny currently exports nothing, nor are there any methods you can 
-call in it. Simply call it with a list of attribute names and it will create 
+None. Moose::Tiny currently exports what Moose itself exports. Simply call it with a list of attribute names and it will create 
 read only accessors for you.
 
     use Moose::Tiny qw(foo bar);
@@ -85,7 +85,7 @@ This will create a bunch of simple accessors, and set the inheritance to be the 
 
 =head1 WHY?
 
-Well I was looking at Object::Tiny's docs and realized that Moose wasn't even in the argument. I felt bad. So I decided hey Moose is shorter to type than Object, I could make this work.
+Well I was looking at Object::Tiny's docs and realized that Moose wasn't even in the argument. I felt bad. So I decided hey I could make this work.
 
 Object::Tiny has a bunch of statistics to show why it is better than Class::Accessor::Fast. Here are some statistics of our own.
 
@@ -95,9 +95,13 @@ Object::Tiny has a bunch of statistics to show why it is better than Class::Acce
 
 That's right, Moose is one less letter than Object, and since otherwise the APIs are identical that's an 8% savings overall.
 
+=item Moose::Tiny brings you the full power of Moose
+
+If you buy now you get C<with>, C<around>, C<after>, C<before> and several other goodies as well! Call now operators are standing by.
+
 =back
 
-Really that's all I got. Moose::Tiny code is a touch bigger than Object::Tiny and since you get all the Moose metaobject goodness our memory footprint is probably a fair bit larger too ... but hey 8% savings when you're typing the code out!
+Really that's all I got. Since you get all the Moose metaobject goodness our memory footprint is probably a fair bit larger ... but hey 8% savings when you're typing the code out!
 
 =head1 CAVEATS
 
