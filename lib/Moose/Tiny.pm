@@ -12,11 +12,11 @@ sub import {
     Moose->import({into => $CALLER});
     # we should never export to main
     return if $CALLER eq 'main';
-    Moose::_init_meta( $CALLER, shift );
+    Moose::init_meta( $CALLER, shift );
 
     my $meta = $CALLER->meta;
     {
-    no warnings;
+    no warnings; # in case we get undef perl complains
     $meta->add_attribute( $_ => { reader => $_, init_arg => $_ } )
       for grep {
         defined and !ref and /^[^\W\d]\w*$/s
@@ -115,26 +115,10 @@ Moose obviously.
 
 =head1 INCOMPATIBILITIES
 
-=for author to fill in:
-    A list of any modules that this module cannot be used in conjunction
-    with. This may be due to name conflicts in the interface, or
-    competition for system or program resources, or due to internal
-    limitations of Perl (for example, many modules that use source code
-    filters are mutually incompatible).
-
 None reported.
 
 
 =head1 BUGS AND LIMITATIONS
-
-=for author to fill in:
-    A list of known problems with the module, together with some
-    indication Whether they are likely to be fixed in an upcoming
-    release. Also a list of restrictions on the features the module
-    does provide: data types that cannot be handled, performance issues
-    and the circumstances in which they may arise, practical
-    limitations on the size of data sets, special cases that are not
-    (yet) handled, etc.
 
 No bugs have been reported.
 

@@ -17,6 +17,7 @@ SCOPE: {
 	use Moose::Tiny qw{ foo bar };
 	";
 	ok( ! $@, 'Created package without error' );
+	diag $@
 }
 
 # Create a trivial object

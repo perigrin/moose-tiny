@@ -1,13 +1,16 @@
+# Load the Module::Install bundled in ./inc/
 use inc::Module::Install;
-WriteMakefile(
-    NAME                => 'Moose::Tiny',
-    AUTHOR              => 'Chris Prather <perigrin@cpan.org>',
-    VERSION_FROM        => 'lib/Moose/Tiny.pm',
-    ABSTRACT_FROM       => 'lib/Moose/Tiny.pm',
-    PL_FILES            => {},
-    PREREQ_PM => {
-        'Test::More' => 0,
-    },
-    dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
-    clean               => { FILES => 'Moose-Tiny-*' },
-);
+
+# Define metadata
+name 'Moose-Tiny';
+all_from 'lib/Moose/Tiny.pm';
+
+# Specific dependencies
+requires 'Moose'                    => '0';
+
+build_requires 'Test::More' => '0.42';
+
+no_index 'directory' => 'ex';
+
+auto_install;
+WriteAll;
