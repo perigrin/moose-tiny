@@ -1,33 +1,34 @@
 package Moose::Tiny;
 use strict;
-our $VERSION = '0.0.1';
+our $VERSION = '0.0.2';
 use Moose 0.26;
 
 sub import {
     my $CALLER = caller();
-    
+
     strict->import;
     warnings->import;
 
-    Moose->import({into => $CALLER});
+    Moose->import( { into => $CALLER } );
+
     # we should never export to main
     return if $CALLER eq 'main';
     Moose::init_meta( $CALLER, shift );
 
     my $meta = $CALLER->meta;
     {
-    no warnings; # in case we get undef perl complains
-    $meta->add_attribute( $_ => { reader => $_, init_arg => $_ } )
-      for grep {
-        defined and !ref and /^[^\W\d]\w*$/s
-          or die "Invalid accessor name '$_'";
-      } @_;
+        no warnings;    # in case we get undef perl complains
+        $meta->add_attribute( $_ => { reader => $_, init_arg => $_ } )
+          for grep {
+            defined and !ref and /^[^\W\d]\w*$/s
+              or die "Invalid accessor name '$_'";
+          } @_;
     }
     return 1;
 }
 
 no Moose;
-1;    # Magic true value required at end of module
+1;                      # Magic true value required at end of module
 __END__
 
 =head1 NAME
@@ -109,14 +110,33 @@ Moose works differently from Object::Tiny. Most importantly moose won't auto-viv
 
 Also attribute slots in Moose are always created even if they're undefined. This behavior *may* change in the future, it's undocumented in Moose, but Object::Tiny expect that if you haven't populated an attribute, that attribute doesn't exist in the instance data structure. This is also not really documented, but is tested for.
 
+Alias has reported some more caveats:
+
+=head2 Installation 
+
+    Moose::Tiny has a number of recursive dependencies (and a few more build_requires deps not shown) with non-perfect cpan testers results (72% aggregate  
+    success installing).
+
+Mooe::Tiny has all of the build requirements of Moose itself. Be prepared to install everything listed in http://cpandeps.cantrell.org.uk/?module=Moose%3A%3ATiny
+
+=head2 Memory 
+
+    Moose::Tiny uses 4.5 megabytes of memory. This is around 550 times larger than Object::Tiny, or a more impressive sounding 55,000% larger :)
+
+=head2 Startup 
+
+    Moose::Tiny takes around a second to load up on the virtual I'm currently working in. Granted that's also in the debugger, so it's WAY slower than it could 
+    be, but Object::Tiny does not take any noticable time to load, even in the same scenario.
+
+This is also an overhead cost from Moose. Neither have been reccomended for use in a critical situation where you are constantly restarting the perl process (eg. CGI). If you find yourself in this situation either try to use a persistant environment (pperl, mod_perl, fastcgi) or try Object::Tiny. On the plus side, our API is 100% compatible so you can switch bak and forth easily.
+
 =head1 DEPENDENCIES
 
 Moose obviously.
 
 =head1 INCOMPATIBILITIES
 
-None reported.
-
+Some people's sense of humor.
 
 =head1 BUGS AND LIMITATIONS
 
@@ -126,11 +146,9 @@ Please report any bugs or feature requests to
 C<bug-moose-tiny@rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org>.
 
-
 =head1 AUTHOR
 
 Chris Prather  C<< <perigrin@cpan.org> >>
-
 
 =head1 LICENCE AND COPYRIGHT
 
