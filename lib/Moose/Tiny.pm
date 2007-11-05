@@ -1,6 +1,6 @@
 package Moose::Tiny;
 use strict;
-our $VERSION = '0.0.2';
+our $VERSION = '0.0.3';
 use Moose 0.26;
 
 sub import {
@@ -28,7 +28,7 @@ sub import {
     return 1;
 }
 
-no Moose;
+no Moose;               # unimport moose features
 1;                      # Magic true value required at end of module
 __END__
 
@@ -39,7 +39,7 @@ Moose::Tiny - Why Should Object::Tiny get all the Fun
 
 =head1 VERSION
 
-This document describes Moose::Tiny version 0.0.1
+This document describes Moose::Tiny version 0.0.3
 
 
 =head1 SYNOPSIS
