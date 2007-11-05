@@ -25,7 +25,7 @@ SCOPE: {
 	my $empty = Foo->new;
 	isa_ok( $empty, 'Foo' );
 	isa_ok( $empty, 'Moose::Object' );
-	is( scalar( keys %$empty ), 2, 'Empty object has two slots' );
+	is( scalar( keys %$empty ), 0, 'Empty object is empty' );
 }
 
 # Create a real object
