@@ -1,35 +1,34 @@
 package Moose::Tiny;
 use strict;
-our $VERSION = '0.0.3';
-use Moose 0.26;
+our $VERSION = '0.0.4';
+use Moose();
+
+use Moose::Exporter;
+
+my ( $isub, $usub ) = Moose::Exporter->build_import_methods( also => 'Moose' );
+
+{
+    no strict 'refs';
+    *{ __PACKAGE__ . '::unimport' } = $usub;
+}
+
 
 sub import {
     my $CALLER = caller();
-
-    strict->import;
-    warnings->import;
-
-    Moose->import( { into => $CALLER } );
-
-    # we should never export to main
-    return if $CALLER eq 'main';
-    Moose::init_meta( $CALLER, shift );
-
-    my $meta = $CALLER->meta;
-    {
-        no warnings;    # in case we get undef perl complains
-        $meta->add_attribute( $_ => { reader => $_, init_arg => $_ } )
-          for grep {
-            defined and !ref and /^[^\W\d]\w*$/s
-              or die "Invalid accessor name '$_'";
-          } @_;
-        $meta->make_immutable;
+    my $pkg    = shift;
+    my $meta   = Moose::Meta::Class->initialize($CALLER);
+    for my $name (@_) {
+        die q[Invalid accessor name 'undef'] unless defined $name;
+        die qq[Invalid accessor name '$name'] if ref $name;
+        die qq[Invalid accessor name '$name'] unless $name =~ /^[^\W\d]\w*$/s;
+        $meta->add_attribute( $name => { is => 'ro', init_arg => $name } );
     }
-    return 1;
+    @_ = ( $pkg, grep { /^-/ } @_ );
+    goto $isub;
 }
 
-no Moose;               # unimport moose features
-1;                      # Magic true value required at end of module
+no Moose;    # unimport moose features
+1;           # Magic true value required at end of module
 __END__
 
 =head1 NAME
