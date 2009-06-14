@@ -6,7 +6,7 @@ name 'Moose-Tiny';
 all_from 'lib/Moose/Tiny.pm';
 
 # Specific dependencies
-requires 'Moose' => '0.81';
+requires 'Moose' => '0.80';
 
 build_requires 'Test::More' => '0.42';
 
