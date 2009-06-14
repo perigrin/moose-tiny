@@ -1,6 +1,6 @@
 package Moose::Tiny;
 use strict;
-our $VERSION = '0.0.4';
+our $VERSION = '0.04';
 use Moose();
 
 use Moose::Exporter;
@@ -20,8 +20,8 @@ sub import {
     for my $name (@_) {
         die q[Invalid accessor name 'undef'] unless defined $name;
         die qq[Invalid accessor name '$name'] if ref $name;
-        die qq[Invalid accessor name '$name'] unless $name =~ /^[^\W\d]\w*$/s;
-        $meta->add_attribute( $name => { is => 'ro', init_arg => $name } );
+        die qq[Invalid accessor name '$name'] unless $name =~ /^[^\W\d]\w*$/s;   
+        $meta->add_attribute( $name => { is => 'ro' } );
     }
     @_ = ( $pkg, grep { /^-/ } @_ );
     goto $isub;
@@ -59,12 +59,13 @@ This document describes Moose::Tiny version 0.0.3
 
 =head1 DESCRIPTION
 
-I was looking at Object::Tiny and thought, wow I bet I could do that really easily with Moose. I was right.
+I was looking at Object::Tiny and thought, wow I bet I could do that really
+easily with Moose. I was right.
 
 =head1 INTERFACE 
 
-None. Moose::Tiny currently exports what Moose itself exports. Simply call it with a list of attribute names and it will create 
-read only accessors for you.
+None. Moose::Tiny currently exports what Moose itself exports. Simply call it
+with a list of attribute names and it will create read only accessors for you.
 
     use Moose::Tiny qw(foo bar);
     
@@ -82,54 +83,79 @@ or a larger list
         seperator_text_content
     )
 
-This will create a bunch of simple accessors, and set the inheritance to be the child of Moose::Object, just like if you'd created them with Moose itself.
-It will also make your class immutable for performance reasons (and because if you're using this you probably don't care).
+This will create a bunch of simple accessors, and set the inheritance to be
+the child of Moose::Object, just like if you'd created them with Moose itself.
+It will also make your class immutable for performance reasons (and because if
+you're using this you probably don't care).
 
 =head1 WHY?
 
-Well I was looking at Object::Tiny's docs and realized that Moose wasn't even in the argument. I felt bad. So I decided hey I could make this work.
+Well I was looking at Object::Tiny's docs and realized that Moose wasn't even
+in the argument. I felt bad. So I decided hey I could make this work.
 
-Object::Tiny has a bunch of statistics to show why it is better than Class::Accessor::Fast. Here are some statistics of our own.
+Object::Tiny has a bunch of statistics to show why it is better than
+Class::Accessor::Fast. Here are some statistics of our own.
 
 =over
 
 =item Moose::Tiny is 8% shorter to type than Object::Tiny
 
-That's right, Moose is one less letter than Object, and since otherwise the APIs are identical that's an 8% savings overall.
+That's right, Moose is one less letter than Object, and since otherwise the
+APIs are identical that's an 8% savings overall.
 
 =item Moose::Tiny brings you the full power of Moose
 
-If you buy now you get C<with>, C<around>, C<after>, C<before> and several other goodies as well! Call now operators are standing by.
+If you buy now you get C<with>, C<around>, C<after>, C<before> and several
+other goodies as well! Call now operators are standing by.
 
 =back
 
-Really that's all I got. Since you get all the Moose metaobject goodness our memory footprint is probably a fair bit larger ... but hey 8% savings when you're typing the code out!
+Really that's all I got. Since you get all the Moose metaobject goodness our
+memory footprint is probably a fair bit larger ... but hey 8% savings when
+you're typing the code out!
 
 =head1 CAVEATS
 
-Moose works differently from Object::Tiny. Most importantly moose won't auto-vivify attribute slots, so if you don't define it in the command line it won't exist in the instance data structure, even if you pass a value to new(); Object::Tiny doesn't document this behavior but it is tested.
+Moose works differently from Object::Tiny. Most importantly moose won't
+auto-vivify attribute slots, so if you don't define it in the command line it
+won't exist in the instance data structure, even if you pass a value to new();
+Object::Tiny doesn't document this behavior but it is tested.
 
-Also attribute slots in Moose are always created even if they're undefined. This behavior *may* change in the future, it's undocumented in Moose, but Object::Tiny expect that if you haven't populated an attribute, that attribute doesn't exist in the instance data structure. This is also not really documented, but is tested for.
+Also attribute slots in Moose are always created even if they're undefined.
+This behavior *may* change in the future, it's undocumented in Moose, but
+Object::Tiny expect that if you haven't populated an attribute, that attribute
+doesn't exist in the instance data structure. This is also not really
+documented, but is tested for.
 
 Alias has reported some more caveats:
 
 =head2 Installation 
 
-    Moose::Tiny has a number of recursive dependencies (and a few more build_requires deps not shown) with non-perfect cpan testers results (72% aggregate  
-    success installing).
+    Moose::Tiny has a number of recursive dependencies (and a few more
+    build_requires deps not shown) with non-perfect cpan testers results (72%
+    aggregate success installing).
 
-Mooe::Tiny has all of the build requirements of Moose itself. Be prepared to install everything listed in http://cpandeps.cantrell.org.uk/?module=Moose%3A%3ATiny
+Moose::Tiny has all of the build requirements of Moose itself. Be prepared to
+install everything listed in
+http://cpandeps.cantrell.org.uk/?module=Moose%3A%3ATiny
 
 =head2 Memory 
 
-    Moose::Tiny uses 4.5 megabytes of memory. This is around 550 times larger than Object::Tiny, or a more impressive sounding 55,000% larger :)
+    Moose::Tiny uses 4.5 megabytes of memory. This is around 550 times larger
+    than Object::Tiny, or a more impressive sounding 55,000% larger :)
 
 =head2 Startup 
 
-    Moose::Tiny takes around a second to load up on the virtual I'm currently working in. Granted that's also in the debugger, so it's WAY slower than it could 
-    be, but Object::Tiny does not take any noticable time to load, even in the same scenario.
+    Moose::Tiny takes around a second to load up on the virtual I'm currently
+    working in. Granted that's also in the debugger, so it's WAY slower than
+    it could be, but Object::Tiny does not take any noticable time to load,
+    even in the same scenario.
 
-This is also an overhead cost from Moose. Neither have been reccomended for use in a critical situation where you are constantly restarting the perl process (eg. CGI). If you find yourself in this situation either try to use a persistant environment (pperl, mod_perl, fastcgi) or try Object::Tiny. On the plus side, our API is 100% compatible so you can switch bak and forth easily.
+This is also an overhead cost from Moose. Neither have been reccomended for
+use in a critical situation where you are constantly restarting the perl
+process (eg. CGI). If you find yourself in this situation either try to use a
+persistant environment (pperl, mod_perl, fastcgi) or try Object::Tiny. On the
+plus side, our API is 100% compatible so you can switch bak and forth easily.
 
 =head2 Benchmarks
 
@@ -158,8 +184,6 @@ Some people's sense of humor.
 
 =head1 BUGS AND LIMITATIONS
 
-No bugs have been reported.
-
 Please report any bugs or feature requests to
 C<bug-moose-tiny@rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org>.
@@ -170,7 +194,8 @@ Chris Prather  C<< <perigrin@cpan.org> >>
 
 =head1 LICENCE AND COPYRIGHT
 
-Copyright (c) 2007, Chris Prather C<< <perigrin@cpan.org> >>. All rights reserved.
+Copyright (c) 2007 - 2009 Chris Prather C<< <chris@prather.org> >>. Some
+rights reserved.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See L<perlartistic>.
